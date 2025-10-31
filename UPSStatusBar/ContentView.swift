@@ -100,7 +100,7 @@ struct ContentView: View {
                                     let nominalPower = Double(nominalPowerString)
                                 {
                                     let powerInWatts =
-                                        nominalPower * (Double(load) / 100.0) * 0.8
+                                        nominalPower * (Double(load) / 100.0)
                                     return String(format: " (%.0fW)", powerInWatts)
                                 }
                                 return ""
