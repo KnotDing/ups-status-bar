@@ -22,8 +22,8 @@ class StatusBarController {
                 self?.updateStatusItem()
             }
         }
-        
-        updateStatusItem() // Initial update
+
+        updateStatusItem()  // Initial update
     }
 
     @objc func togglePopover(_ sender: Any?) {
@@ -44,14 +44,18 @@ class StatusBarController {
             var statusParts: [String] = []
 
             if UserDefaults.standard.bool(forKey: "showStatusSymbolInMenuBar") {
-                if let status = monitor.upsInfo["NUTStatus"] as? String ?? monitor.upsInfo["Status"] as? String {
+                if let status = monitor.upsInfo["NUTStatus"] as? String ?? monitor.upsInfo["Status"]
+                    as? String
+                {
                     let statusSymbol = status.contains("OB") ? "⚡️" : "🔌"
                     statusParts.append(statusSymbol)
                 }
             }
 
             if UserDefaults.standard.bool(forKey: "showChargeInMenuBar") {
-                if let charge = monitor.upsInfo["NUTCharge"] as? Int ?? monitor.upsInfo["Charge"] as? Int {
+                if let charge = monitor.upsInfo["NUTCharge"] as? Int ?? monitor.upsInfo["Charge"]
+                    as? Int
+                {
                     statusParts.append("\(charge)%")
                 }
             }
@@ -64,7 +68,17 @@ class StatusBarController {
 
             if UserDefaults.standard.bool(forKey: "showLoadInMenuBar") {
                 if let load = monitor.upsInfo["NUTLoadPercent"] as? Int {
-                    statusParts.append("\(load)W")
+                    let powerText: String = {
+                        if let nominalPowerString = monitor.upsInfo["NUT.ups.power.nominal"]
+                            as? String,
+                            let nominalPower = Double(nominalPowerString)
+                        {
+                            let powerInWatts = nominalPower * (Double(load) / 100.0) * 0.8
+                            return String(format: "%.0fW", powerInWatts)
+                        }
+                        return ""
+                    }()
+                    statusParts.append("\(powerText)")
                 }
             }
 
@@ -72,12 +86,17 @@ class StatusBarController {
             button.title = statusText.isEmpty ? "UPS" : statusText
             button.image = nil
         } else {
-            if let image = NSImage(systemSymbolName: "bolt.horizontal", accessibilityDescription: NSLocalizedString("UPS", comment: "Accessibility description for UPS status icon")) {
+            if let image = NSImage(
+                systemSymbolName: "bolt.horizontal",
+                accessibilityDescription: NSLocalizedString(
+                    "UPS", comment: "Accessibility description for UPS status icon"))
+            {
                 image.isTemplate = true
                 button.image = image
                 button.title = ""
             } else {
-                button.title = NSLocalizedString("UPS", comment: "Fallback title for UPS status icon")
+                button.title = NSLocalizedString(
+                    "UPS", comment: "Fallback title for UPS status icon")
                 button.image = nil
             }
         }
