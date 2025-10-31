@@ -3,7 +3,7 @@ name: Create Release DMG
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build-and-package:
@@ -29,5 +29,3 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: UPSStatusBar.dmg
-          # This creates a draft release. Remove 'draft: true' to publish directly.
-          draft: true
