@@ -19,14 +19,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
+        let monitor = UPSMonitor()
+
         // Create the SwiftUI content and inject UPSMonitor as environment object
         let contentView = ContentView()
-            .environmentObject(UPSMonitor())
+            .environmentObject(monitor)
 
         // popover.contentSize = NSSize(width: 320, height: 160) // Removed for dynamic sizing
         popover.behavior = .transient
         popover.contentViewController = NSHostingController(rootView: contentView)
 
-        statusBarController = StatusBarController(popover: popover)
+        statusBarController = StatusBarController(popover: popover, monitor: monitor)
     }
 }

@@ -14,6 +14,7 @@ struct NotificationSettingsView: View {
     @State private var autoShutdownEnabled: Bool = false
     @State private var shutdownConditionIndex: Int = 0
     @State private var shutdownValue: String = "10"
+    @State private var showStatusInMenuBar: Bool = false
 
     @State private var saveMessage: String = ""
 
@@ -42,6 +43,7 @@ struct NotificationSettingsView: View {
                             .onChange(of: launchAtLoginEnabled) { newValue in
                                 LaunchAtLogin.setEnabled(newValue)
                             }
+                        Toggle(LocalizedStringKey("在状态栏中显示状态"), isOn: $showStatusInMenuBar)
                     }
 
                     Divider()
@@ -133,6 +135,7 @@ struct NotificationSettingsView: View {
         autoShutdownEnabled = UserDefaults.standard.bool(forKey: "autoShutdownEnabled")
         shutdownConditionIndex = UserDefaults.standard.integer(forKey: "shutdownConditionIndex")
         shutdownValue = UserDefaults.standard.string(forKey: "shutdownValue") ?? "10"
+        showStatusInMenuBar = UserDefaults.standard.bool(forKey: "showStatusInMenuBar")
         saveMessage = ""
     }
 
@@ -146,6 +149,7 @@ struct NotificationSettingsView: View {
         UserDefaults.standard.set(autoShutdownEnabled, forKey: "autoShutdownEnabled")
         UserDefaults.standard.set(shutdownConditionIndex, forKey: "shutdownConditionIndex")
         UserDefaults.standard.set(shutdownValue, forKey: "shutdownValue")
+        UserDefaults.standard.set(showStatusInMenuBar, forKey: "showStatusInMenuBar")
 
         saveMessage = NSLocalizedString("设置已保存", comment: "")
 
