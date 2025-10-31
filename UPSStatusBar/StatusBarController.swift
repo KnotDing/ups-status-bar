@@ -41,19 +41,34 @@ class StatusBarController {
         let showDetails = UserDefaults.standard.bool(forKey: "showStatusInMenuBar")
 
         if showDetails {
-            let charge = monitor.upsInfo["NUTCharge"] as? Int ?? monitor.upsInfo["Charge"] as? Int
-            let status = monitor.upsInfo["NUTStatus"] as? String ?? monitor.upsInfo["Status"] as? String ?? ""
+            var statusParts: [String] = []
 
-            var statusText = ""
-            if let charge = charge {
-                statusText += "\(charge)%"
-            }
-            
-            if !status.isEmpty {
-                let statusSymbol = status.contains("OB") ? "⚡️" : "🔌"
-                statusText += " \(statusSymbol)"
+            if UserDefaults.standard.bool(forKey: "showStatusSymbolInMenuBar") {
+                if let status = monitor.upsInfo["NUTStatus"] as? String ?? monitor.upsInfo["Status"] as? String {
+                    let statusSymbol = status.contains("OB") ? "⚡️" : "🔌"
+                    statusParts.append(statusSymbol)
+                }
             }
 
+            if UserDefaults.standard.bool(forKey: "showChargeInMenuBar") {
+                if let charge = monitor.upsInfo["NUTCharge"] as? Int ?? monitor.upsInfo["Charge"] as? Int {
+                    statusParts.append("\(charge)%")
+                }
+            }
+
+            if UserDefaults.standard.bool(forKey: "showTimeRemainingInMenuBar") {
+                if let timeInSeconds = monitor.upsInfo["NUTTimeRemaining"] as? Int {
+                    statusParts.append(formatSecondsToHMS(timeInSeconds))
+                }
+            }
+
+            if UserDefaults.standard.bool(forKey: "showLoadInMenuBar") {
+                if let load = monitor.upsInfo["NUTLoadPercent"] as? Int {
+                    statusParts.append("\(load)W")
+                }
+            }
+
+            let statusText = statusParts.joined(separator: " ")
             button.title = statusText.isEmpty ? "UPS" : statusText
             button.image = nil
         } else {
@@ -65,6 +80,16 @@ class StatusBarController {
                 button.title = NSLocalizedString("UPS", comment: "Fallback title for UPS status icon")
                 button.image = nil
             }
+        }
+    }
+
+    private func formatSecondsToHMS(_ totalSeconds: Int) -> String {
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
         }
     }
 }

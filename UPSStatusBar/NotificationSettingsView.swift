@@ -4,7 +4,7 @@ struct NotificationSettingsView: View {
     var onDismiss: () -> Void
 
     // MARK: - State Variables
-    @State private var launchAtLoginEnabled: Bool = false
+    @State private var launchAtLoginEnabled: Bool = LaunchAtLogin.isEnabled
     @State private var notifyOnStatusChange: Bool = false
     @State private var notifyOnLowBattery: Bool = false
     @State private var lowBatteryThreshold: String = "20"
@@ -15,6 +15,11 @@ struct NotificationSettingsView: View {
     @State private var shutdownConditionIndex: Int = 0
     @State private var shutdownValue: String = "10"
     @State private var showStatusInMenuBar: Bool = false
+    @State private var showChargeInMenuBar: Bool = false
+    @State private var showStatusSymbolInMenuBar: Bool = false
+    @State private var showTimeRemainingInMenuBar: Bool = false
+    @State private var showLoadInMenuBar: Bool = false
+
 
     @State private var saveMessage: String = ""
 
@@ -44,6 +49,14 @@ struct NotificationSettingsView: View {
                                 LaunchAtLogin.setEnabled(newValue)
                             }
                         Toggle(LocalizedStringKey("在状态栏中显示状态"), isOn: $showStatusInMenuBar)
+                        if showStatusInMenuBar {
+                            VStack(alignment: .leading) {
+                                Toggle(LocalizedStringKey("显示电量"), isOn: $showChargeInMenuBar)
+                                Toggle(LocalizedStringKey("显示状态图标"), isOn: $showStatusSymbolInMenuBar)
+                                Toggle(LocalizedStringKey("显示剩余时间"), isOn: $showTimeRemainingInMenuBar)
+                                Toggle(LocalizedStringKey("显示负载"), isOn: $showLoadInMenuBar)
+                            }.padding(.leading, 20)
+                        }
                     }
 
                     Divider()
@@ -125,7 +138,6 @@ struct NotificationSettingsView: View {
     }
 
     private func loadConfig() {
-        launchAtLoginEnabled = LaunchAtLogin.isEnabled
         notifyOnStatusChange = UserDefaults.standard.bool(forKey: "notifyOnStatusChange")
         notifyOnLowBattery = UserDefaults.standard.bool(forKey: "notifyOnLowBattery")
         lowBatteryThreshold = UserDefaults.standard.string(forKey: "lowBatteryThreshold") ?? "20"
@@ -136,6 +148,10 @@ struct NotificationSettingsView: View {
         shutdownConditionIndex = UserDefaults.standard.integer(forKey: "shutdownConditionIndex")
         shutdownValue = UserDefaults.standard.string(forKey: "shutdownValue") ?? "10"
         showStatusInMenuBar = UserDefaults.standard.bool(forKey: "showStatusInMenuBar")
+        showChargeInMenuBar = UserDefaults.standard.bool(forKey: "showChargeInMenuBar")
+        showStatusSymbolInMenuBar = UserDefaults.standard.bool(forKey: "showStatusSymbolInMenuBar")
+        showTimeRemainingInMenuBar = UserDefaults.standard.bool(forKey: "showTimeRemainingInMenuBar")
+        showLoadInMenuBar = UserDefaults.standard.bool(forKey: "showLoadInMenuBar")
         saveMessage = ""
     }
 
@@ -150,6 +166,10 @@ struct NotificationSettingsView: View {
         UserDefaults.standard.set(shutdownConditionIndex, forKey: "shutdownConditionIndex")
         UserDefaults.standard.set(shutdownValue, forKey: "shutdownValue")
         UserDefaults.standard.set(showStatusInMenuBar, forKey: "showStatusInMenuBar")
+        UserDefaults.standard.set(showChargeInMenuBar, forKey: "showChargeInMenuBar")
+        UserDefaults.standard.set(showStatusSymbolInMenuBar, forKey: "showStatusSymbolInMenuBar")
+        UserDefaults.standard.set(showTimeRemainingInMenuBar, forKey: "showTimeRemainingInMenuBar")
+        UserDefaults.standard.set(showLoadInMenuBar, forKey: "showLoadInMenuBar")
 
         saveMessage = NSLocalizedString("设置已保存", comment: "")
 
