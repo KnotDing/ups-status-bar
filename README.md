@@ -19,15 +19,19 @@ A simple macOS status bar application to monitor an Uninterruptible Power Supply
 ## Screenshots
 
 **Main Interface**
+
 ![Main Interface](images/main.png)
 
 **Details View**
+
 ![Details View](images/detail.png)
 
 **NUT Server Configuration**
+
 ![NUT Server Configuration](images/nut.png)
 
 **Settings (Notifications & Startup)**
+
 ![Settings](images/settings.png)
 
 ## Requirements
