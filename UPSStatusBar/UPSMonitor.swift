@@ -96,7 +96,7 @@ class UPSMonitor: ObservableObject {
             print("UPS returned to line power. Resetting shutdown state.")
         }
 
-        if UserDefaults.standard.bool(forKey: "notifyOnStatusChange"), newStatus != oldStatus, let new = newStatus, let old = oldStatus {
+        if UserDefaults.standard.bool(forKey: "notifyOnStatusChange"), let new = newStatus, let old = oldStatus, !areStatusesEquivalentForNotification(status1: new, status2: old) {
             sendNotification(title: "UPS 状态变化", body: "状态已从 \(old) 变为 \(new)。")
         }
         if let newCharge = newInfo["NUTCharge"] as? Int, let oldCharge = oldInfo["NUTCharge"] as? Int {
@@ -110,6 +110,12 @@ class UPSMonitor: ObservableObject {
         if let newLoad = newInfo["NUTLoadPercent"] as? Int, let oldLoad = oldInfo["NUTLoadPercent"] as? Int, UserDefaults.standard.bool(forKey: "notifyOnHighLoad"), let threshold = Int(UserDefaults.standard.string(forKey: "highLoadThreshold") ?? "90"), oldLoad < threshold && newLoad >= threshold {
             sendNotification(title: "UPS 负载过高", body: "当前负载为 \(newLoad)%，超过设定的 \(threshold)% 阈值。")
         }
+    }
+
+    private func areStatusesEquivalentForNotification(status1: String, status2: String) -> Bool {
+        let normalizedStatus1 = status1.replacingOccurrences(of: " CHRG", with: "")
+        let normalizedStatus2 = status2.replacingOccurrences(of: " CHRG", with: "")
+        return normalizedStatus1 == normalizedStatus2
     }
 
     private func checkForShutdown(newInfo: [String: Any]) {
