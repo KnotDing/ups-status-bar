@@ -1,0 +1,31 @@
+name: Create Release DMG
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-package:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build the .app bundle
+        run: |
+          chmod +x build_app.sh
+          ./build_app.sh
+
+      - name: Create the DMG
+        run: |
+          chmod +x create_dmg.sh
+          ./create_dmg.sh
+
+      - name: Create GitHub Release and Upload DMG
+        uses: softprops/action-gh-release@v1
+        with:
+          files: UPSStatusBar.dmg
+          # This creates a draft release. Remove 'draft: true' to publish directly.
+          draft: true
