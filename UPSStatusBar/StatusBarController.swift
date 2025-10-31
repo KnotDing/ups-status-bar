@@ -1,19 +1,21 @@
 import Cocoa
 import Combine
 
-class StatusBarController {
+class StatusBarController: NSObject, NSWindowDelegate {
     private var statusItem: NSStatusItem
-    private var popover: NSPopover
+    private var window: NSWindow
     private var monitor: UPSMonitor
     private var cancellable: AnyCancellable?
+    private var eventMonitor: Any?
 
-    init(popover: NSPopover, monitor: UPSMonitor) {
-        self.popover = popover
+    init(window: NSWindow, monitor: UPSMonitor) {
+        self.window = window
         self.monitor = monitor
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        super.init()
 
         if let button = statusItem.button {
-            button.action = #selector(togglePopover(_:))
+            button.action = #selector(toggleWindow(_:))
             button.target = self
         }
 
@@ -23,15 +25,57 @@ class StatusBarController {
             }
         }
 
+        window.delegate = self
         updateStatusItem()  // Initial update
     }
 
-    @objc func togglePopover(_ sender: Any?) {
-        if popover.isShown {
-            popover.performClose(sender)
-        } else if let button = statusItem.button {
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            popover.contentViewController?.view.window?.makeKeyAndOrderFront(nil)
+    @objc func toggleWindow(_ sender: Any?) {
+        if window.isVisible {
+            window.orderOut(sender)
+            removeEventMonitor()
+        } else {
+            positionWindow()
+            window.makeKeyAndOrderFront(sender)
+            NSApp.activate(ignoringOtherApps: true)
+            addEventMonitor()
+        }
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        removeEventMonitor()
+    }
+
+    private func positionWindow() {
+        guard let button = statusItem.button else { return }
+        let buttonFrame = button.window!.convertToScreen(button.frame)
+
+        let view = window.contentView!
+        let windowSize = view.fittingSize
+        window.setFrame(NSRect(x: 0, y: 0, width: windowSize.width, height: windowSize.height), display: true)
+
+        var windowFrame = window.frame
+        windowFrame.origin.x = buttonFrame.origin.x + (buttonFrame.width - windowFrame.width) / 2
+        windowFrame.origin.y = buttonFrame.origin.y - windowFrame.height
+
+        window.setFrame(windowFrame, display: true)
+    }
+
+    private func addEventMonitor() {
+        if eventMonitor == nil {
+            eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+                guard let self = self else { return }
+                if self.window.isVisible, event.windowNumber != self.window.windowNumber {
+                    self.window.orderOut(nil)
+                    self.removeEventMonitor()
+                }
+            }
+        }
+    }
+
+    private func removeEventMonitor() {
+        if let eventMonitor = eventMonitor {
+            NSEvent.removeMonitor(eventMonitor)
+            self.eventMonitor = nil
         }
     }
 
@@ -68,17 +112,15 @@ class StatusBarController {
 
             if UserDefaults.standard.bool(forKey: "showLoadInMenuBar") {
                 if let load = monitor.upsInfo["NUTLoadPercent"] as? Int {
-                    let powerText: String = {
-                        if let nominalPowerString = monitor.upsInfo["NUT.ups.power.nominal"]
-                            as? String,
-                            let nominalPower = Double(nominalPowerString)
-                        {
-                            let powerInWatts = nominalPower * (Double(load) / 100.0) * 0.8
-                            return String(format: "%.0fW", powerInWatts)
-                        }
-                        return ""
-                    }()
-                    statusParts.append("\(powerText)")
+                    let powerInWatts: String
+                    if let nominalPowerString = monitor.upsInfo["NUT.ups.power.nominal"] as? String,
+                       let nominalPower = Double(nominalPowerString), nominalPower > 0 {
+                        let calculatedPower = nominalPower * (Double(load) / 100.0)
+                        powerInWatts = String(format: "%.0fW", calculatedPower)
+                    } else {
+                        powerInWatts = "\(load)%"
+                    }
+                    statusParts.append(powerInWatts)
                 }
             }
 

@@ -3,7 +3,7 @@ import SwiftUI
 import UserNotifications
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-    var popover = NSPopover()
+    var window: NSWindow!
     var statusBarController: StatusBarController!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -11,7 +11,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
 
         // Request notification authorization
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) {
+            granted, error in
             if granted {
                 print("Notification permission granted.")
             } else if let error = error {
@@ -25,10 +26,40 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let contentView = ContentView()
             .environmentObject(monitor)
 
-        // popover.contentSize = NSSize(width: 320, height: 160) // Removed for dynamic sizing
-        popover.behavior = .transient
-        popover.contentViewController = NSHostingController(rootView: contentView)
+        // Create a borderless window to act as a popover
+        window = NSWindow(
+            contentRect: .zero,
+            styleMask: [.borderless, .nonactivatingPanel],
+            backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.alphaValue = 0.85
 
-        statusBarController = StatusBarController(popover: popover, monitor: monitor)
+        let visualEffectView = NSVisualEffectView()
+        visualEffectView.blendingMode = .behindWindow
+        visualEffectView.state = .active
+        visualEffectView.material = .menu
+        visualEffectView.wantsLayer = true
+        visualEffectView.layer?.cornerRadius = 20.0
+        visualEffectView.layer?.masksToBounds = true
+
+        window.contentView = visualEffectView
+
+        let hostingView = NSHostingView(rootView: contentView)
+        visualEffectView.addSubview(hostingView)
+
+        hostingView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hostingView.topAnchor.constraint(equalTo: visualEffectView.topAnchor),
+            hostingView.leadingAnchor.constraint(equalTo: visualEffectView.leadingAnchor),
+            hostingView.trailingAnchor.constraint(equalTo: visualEffectView.trailingAnchor),
+            hostingView.bottomAnchor.constraint(equalTo: visualEffectView.bottomAnchor),
+        ])
+
+        window.level = .floating
+        window.collectionBehavior = .canJoinAllSpaces
+
+        statusBarController = StatusBarController(window: window, monitor: monitor)
     }
 }

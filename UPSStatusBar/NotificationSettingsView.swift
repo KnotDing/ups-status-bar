@@ -20,10 +20,12 @@ struct NotificationSettingsView: View {
     @State private var showTimeRemainingInMenuBar: Bool = false
     @State private var showLoadInMenuBar: Bool = false
 
-
     @State private var saveMessage: String = ""
 
-    private let shutdownConditions = [NSLocalizedString("电源断开后", comment: ""), NSLocalizedString("电量剩余", comment: ""), NSLocalizedString("剩余时间", comment: "")]
+    private let shutdownConditions = [
+        NSLocalizedString("电源断开后", comment: ""), NSLocalizedString("电量剩余", comment: ""),
+        NSLocalizedString("剩余时间", comment: ""),
+    ]
     private var shutdownUnit: String {
         switch shutdownConditionIndex {
         case 0: return NSLocalizedString("分钟后", comment: "")
@@ -38,6 +40,7 @@ struct NotificationSettingsView: View {
             Text(LocalizedStringKey("设置"))
                 .font(.title2)
                 .padding(.bottom, 8)
+                .frame(maxWidth: .infinity, alignment: .center)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
@@ -52,8 +55,10 @@ struct NotificationSettingsView: View {
                         if showStatusInMenuBar {
                             VStack(alignment: .leading) {
                                 Toggle(LocalizedStringKey("显示电量"), isOn: $showChargeInMenuBar)
-                                Toggle(LocalizedStringKey("显示状态图标"), isOn: $showStatusSymbolInMenuBar)
-                                Toggle(LocalizedStringKey("显示剩余时间"), isOn: $showTimeRemainingInMenuBar)
+                                Toggle(
+                                    LocalizedStringKey("显示状态图标"), isOn: $showStatusSymbolInMenuBar)
+                                Toggle(
+                                    LocalizedStringKey("显示剩余时间"), isOn: $showTimeRemainingInMenuBar)
                                 Toggle(LocalizedStringKey("显示负载"), isOn: $showLoadInMenuBar)
                             }.padding(.leading, 20)
                         }
@@ -150,7 +155,8 @@ struct NotificationSettingsView: View {
         showStatusInMenuBar = UserDefaults.standard.bool(forKey: "showStatusInMenuBar")
         showChargeInMenuBar = UserDefaults.standard.bool(forKey: "showChargeInMenuBar")
         showStatusSymbolInMenuBar = UserDefaults.standard.bool(forKey: "showStatusSymbolInMenuBar")
-        showTimeRemainingInMenuBar = UserDefaults.standard.bool(forKey: "showTimeRemainingInMenuBar")
+        showTimeRemainingInMenuBar = UserDefaults.standard.bool(
+            forKey: "showTimeRemainingInMenuBar")
         showLoadInMenuBar = UserDefaults.standard.bool(forKey: "showLoadInMenuBar")
         saveMessage = ""
     }

@@ -10,22 +10,21 @@ struct UPSPreviewPopoverView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            // Text("详情").font(.headline)
-            //     .padding(.bottom, 5)
 
             if preview.isEmpty {
                 Text(LocalizedStringKey("没有可用的预览数据。"))
                     .foregroundColor(.secondary)
             } else {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 10) {
                         ForEach(sortedKeys, id: \.self) { key in
                             HStack(alignment: .top) {
                                 Text("\(key):")
-                                    .fontWeight(.bold)
                                     .frame(width: 180, alignment: .leading)
+                                    .foregroundColor(.secondary)
                                 Text(String(describing: preview[key]!))
                                     .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundColor(.secondary)
                             }
                             Divider()
                         }
