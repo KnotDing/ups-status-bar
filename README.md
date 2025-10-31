@@ -1,65 +1,67 @@
-# UPSStatusBar for macOS
+[English Version](README.en.md)
 
-A simple macOS status bar application to monitor an Uninterruptible Power Supply (UPS). It can connect to a NUT (Network UPS Tools) server or use the native power source information provided by macOS.
+# 适用于 macOS 的 UPSStatusBar
 
-## Features
+一个简单的 macOS 状态栏应用程序，用于监控不间断电源 (UPS)。它可以连接到 NUT (Network UPS Tools) 服务器，或使用 macOS 提供的原生电源信息。
 
-- **Status Bar Popover**: Click the bolt icon in the status bar to see a quick summary of your UPS status, including charge level, estimated time remaining, and current load.
-- **Auto-Refresh**: Data is refreshed automatically every few seconds.
-- **Detailed View**: A "Show Details" button to display all available variables from the UPS.
-- **NUT Server Support**: Configure the app to connect to a remote NUT server to monitor any UPS on your network.
-- **Device Discovery**: Automatically discover available UPS devices on your configured NUT server.
-- **Configurable Notifications**: Receive system notifications for important UPS events:
-    - Status change (e.g., from Online to On Battery)
-    - Battery level drops below a custom threshold
-    - Battery becomes fully charged
-    - Load exceeds a custom threshold
-- **Launch at Login**: Conveniently set the application to start automatically when you log in to your Mac.
+## 功能
 
-## Screenshots
+- **状态栏弹窗**: 点击状态栏中的闪电图标，可快速查看 UPS 状态摘要，包括电量、预计剩余时间以及当前负载。
+- **自动刷新**: 数据每隔几秒自动刷新。
+- **详细视图**: “显示详情”按钮可显示 UPS 的所有可用变量。
+- **NUT 服务器支持**: 配置应用程序以连接到远程 NUT 服务器，监控您网络上的任何 UPS。
+- **设备发现**: 自动发现您配置的 NUT 服务器上可用的 UPS 设备。
+- **可配置通知**: 接收重要 UPS 事件的系统通知：
+    - 状态变化（例如，从在线切换到电池供电）
+    - 电池电量低于自定义阈值
+    - 电池充满电
+    - 负载超过自定义阈值
+- **开机启动**: 方便地设置应用程序在您登录 Mac 时自动启动。
 
-**Main Interface**
+## 截图
 
-![Main Interface](images/main.png)
+**主界面**
 
-**Details View**
+![主界面](images/main.png)
 
-![Details View](images/detail.png)
+**详情视图**
 
-**NUT Server Configuration**
+![详情视图](images/detail.png)
 
-![NUT Server Configuration](images/nut.png)
+**NUT 服务器配置**
 
-**Settings (Notifications & Startup)**
+![NUT 服务器配置](images/nut.png)
 
-![Settings](images/settings.png)
+**设置（通知与启动）**
 
-## Requirements
+![设置](images/settings.png)
 
-- macOS 11.0 or later
-- Swift 5.6 or later (or a version of Xcode that includes it)
+## 要求
 
-## How to Build and Run
+- macOS 11.0 或更高版本
+- Swift 5.6 或更高版本（或包含它的 Xcode 版本）
 
-1.  **Clone the repository.**
-2.  **Navigate to the project directory:**
+## 如何构建和运行
+
+1.  **克隆仓库。**
+2.  **导航到项目目录：**
     ```bash
     cd /path/to/repository
     ```
-3.  **Build the project:**
+3.  **构建项目：**
     ```bash
     swift build
     ```
-4.  **Run the application:**
+4.  **运行应用程序：**
     ```bash
     swift run UPSStatusBar
     ```
-    The application can also be built for release using `swift build -c release`. The final executable will be located in the `.build/release` directory.
+    应用程序也可以使用 `swift build -c release` 命令以发布模式构建。最终的可执行文件将位于 `.build/release` 目录中。
 
-## Configuration
+## 配置
 
-- **NUT Server**: Click the "Configure NUT" button in the main popover to set up your NUT server's host, port, and credentials. You can also test the connection and select which UPS to monitor.
-- **Notifications & Startup**: Click the gear icon (⚙️) to open the Settings window. Here you can enable or disable different notifications, set thresholds, and toggle the "Launch at Login" option.
+- **NUT 服务器**: 点击主弹窗中的“配置 NUT”按钮，设置您的 NUT 服务器的主机、端口和凭据。您还可以测试连接并选择要监控的 UPS。
+- **通知与启动**: 点击齿轮图标 (⚙️) 打开设置窗口。您可以在此处启用或禁用不同的通知，设置阈值，以及切换“开机启动”选项。
 
 ---
 

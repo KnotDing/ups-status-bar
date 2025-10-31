@@ -14,7 +14,7 @@ struct UPSPreviewPopoverView: View {
             //     .padding(.bottom, 5)
 
             if preview.isEmpty {
-                Text("没有可用的预览数据。")
+                Text(LocalizedStringKey("没有可用的预览数据。"))
                     .foregroundColor(.secondary)
             } else {
                 ScrollView {

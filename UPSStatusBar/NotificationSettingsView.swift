@@ -17,19 +17,19 @@ struct NotificationSettingsView: View {
 
     @State private var saveMessage: String = ""
 
-    private let shutdownConditions = ["电源断开后", "电量剩余", "剩余时间"]
+    private let shutdownConditions = [NSLocalizedString("电源断开后", comment: ""), NSLocalizedString("电量剩余", comment: ""), NSLocalizedString("剩余时间", comment: "")]
     private var shutdownUnit: String {
         switch shutdownConditionIndex {
-        case 0: return "分钟后"
-        case 1: return "%"
-        case 2: return "分钟"
+        case 0: return NSLocalizedString("分钟后", comment: "")
+        case 1: return NSLocalizedString("%", comment: "")
+        case 2: return NSLocalizedString("分钟", comment: "")
         default: return ""
         }
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("设置")
+            Text(LocalizedStringKey("设置"))
                 .font(.title2)
                 .padding(.bottom, 8)
 
@@ -37,8 +37,8 @@ struct NotificationSettingsView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // General Settings
                     VStack(alignment: .leading) {
-                        Text("通用").font(.headline)
-                        Toggle("开机启动", isOn: $launchAtLoginEnabled)
+                        Text(LocalizedStringKey("通用")).font(.headline)
+                        Toggle(LocalizedStringKey("开机启动"), isOn: $launchAtLoginEnabled)
                             .onChange(of: launchAtLoginEnabled) { newValue in
                                 LaunchAtLogin.setEnabled(newValue)
                             }
@@ -48,25 +48,25 @@ struct NotificationSettingsView: View {
 
                     // Notification Settings
                     VStack(alignment: .leading) {
-                        Text("通知").font(.headline)
-                        Toggle("UPS 状态变化时通知", isOn: $notifyOnStatusChange)
-                        Toggle("电量充满时通知", isOn: $notifyOnFullyCharged)
+                        Text(LocalizedStringKey("通知")).font(.headline)
+                        Toggle(LocalizedStringKey("UPS 状态变化时通知"), isOn: $notifyOnStatusChange)
+                        Toggle(LocalizedStringKey("电量充满时通知"), isOn: $notifyOnFullyCharged)
                         HStack {
-                            Toggle("电量低于设定值时通知", isOn: $notifyOnLowBattery)
+                            Toggle(LocalizedStringKey("电量低于设定值时通知"), isOn: $notifyOnLowBattery)
                             Spacer()
                             TextField("", text: $lowBatteryThreshold).frame(width: 40)
                                 .multilineTextAlignment(.trailing).textFieldStyle(
                                     RoundedBorderTextFieldStyle())
-                            Text("%")
+                            Text(LocalizedStringKey("%"))
                         }
                         HStack {
-                            Toggle("负载高于设定值时通知", isOn: $notifyOnHighLoad)
+                            Toggle(LocalizedStringKey("负载高于设定值时通知"), isOn: $notifyOnHighLoad)
                             Spacer()
                             TextField("", text: $highLoadThreshold).frame(width: 40)
                                 .multilineTextAlignment(
                                     .trailing
                                 ).textFieldStyle(RoundedBorderTextFieldStyle())
-                            Text("%")
+                            Text(LocalizedStringKey("%"))
                         }
                     }
 
@@ -74,24 +74,24 @@ struct NotificationSettingsView: View {
 
                     // Auto Shutdown Settings
                     VStack(alignment: .leading) {
-                        Text("自动关机").font(.headline)
-                        Toggle("启用自动关机", isOn: $autoShutdownEnabled)
+                        Text(LocalizedStringKey("自动关机")).font(.headline)
+                        Toggle(LocalizedStringKey("启用自动关机"), isOn: $autoShutdownEnabled)
                         HStack {
-                            Picker("关机条件", selection: $shutdownConditionIndex) {
+                            Picker(LocalizedStringKey("关机条件"), selection: $shutdownConditionIndex) {
                                 ForEach(0..<shutdownConditions.count, id: \.self) { index in
                                     Text(self.shutdownConditions[index])
                                 }
                             }
                             .disabled(!autoShutdownEnabled)
 
-                            TextField("值", text: $shutdownValue)
+                            TextField(LocalizedStringKey("值"), text: $shutdownValue)
                                 .frame(width: 50)
                                 .multilineTextAlignment(.trailing)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .disabled(!autoShutdownEnabled)
                             Text(shutdownUnit)
                         }
-                        Text("警告：这是一个危险操作，它会触发系统关机。请谨慎使用。")
+                        Text(LocalizedStringKey("警告：这是一个危险操作，它会触发系统关机。请谨慎使用。"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -101,18 +101,18 @@ struct NotificationSettingsView: View {
             Spacer()
 
             if !saveMessage.isEmpty {
-                Text(saveMessage).foregroundColor(.green)
+                Text(LocalizedStringKey(saveMessage)).foregroundColor(.green)
             }
 
             HStack {
-                Button("退出应用") {
+                Button(LocalizedStringKey("退出应用")) {
                     NSApplication.shared.terminate(nil)
                 }
                 .foregroundColor(.red)
 
                 Spacer()
-                Button("关闭") { onDismiss() }
-                Button("保存设置") {
+                Button(LocalizedStringKey("关闭")) { onDismiss() }
+                Button(LocalizedStringKey("保存设置")) {
                     saveSettings()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -147,7 +147,7 @@ struct NotificationSettingsView: View {
         UserDefaults.standard.set(shutdownConditionIndex, forKey: "shutdownConditionIndex")
         UserDefaults.standard.set(shutdownValue, forKey: "shutdownValue")
 
-        saveMessage = "设置已保存"
+        saveMessage = NSLocalizedString("设置已保存", comment: "")
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             onDismiss()

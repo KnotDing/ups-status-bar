@@ -11,12 +11,12 @@ class StatusBarController {
         if let button = statusItem.button {
             // Use an SF Symbol if available (macOS 11+). Fallback: set title.
             if let image = NSImage(
-                systemSymbolName: "bolt.horizontal", accessibilityDescription: "UPS")
+                systemSymbolName: "bolt.horizontal", accessibilityDescription: NSLocalizedString("UPS", comment: "Accessibility description for UPS status icon"))
             {
                 image.isTemplate = true
                 button.image = image
             } else {
-                button.title = "UPS"
+                button.title = NSLocalizedString("UPS", comment: "Fallback title for UPS status icon")
             }
             button.action = #selector(togglePopover(_:))
             button.target = self

@@ -14,9 +14,9 @@ struct ContentView: View {
             if showingDetails {
                 // Detail View
                 HStack {
-                    Text("详情").font(.headline)
+                    Text(LocalizedStringKey("详情")).font(.headline)
                     Spacer()
-                    Button("返回") { showingDetails = false }.buttonStyle(BorderlessButtonStyle())
+                    Button(LocalizedStringKey("返回")) { showingDetails = false }.buttonStyle(BorderlessButtonStyle())
                 }
                 UPSPreviewPopoverView(preview: $monitor.upsInfo)
 
@@ -33,7 +33,7 @@ struct ContentView: View {
                 HStack {
                     Spacer()
                     Button(action: { showingNutConfig = true }) {
-                        Text("配置 NUT")
+                        Text(LocalizedStringKey("配置 NUT"))
                     }
                     .buttonStyle(BorderlessButtonStyle())
 
@@ -45,9 +45,9 @@ struct ContentView: View {
                 }
 
                 if monitor.upsInfo.isEmpty {
-                    Text("未检测到 UPS")
+                    Text(LocalizedStringKey("未检测到 UPS"))
                         .font(.headline)
-                    Text("请确保 UPS 已连接并且 macOS 能识别它（例如通过 USB），或配置 NUT Server。")
+                    Text(LocalizedStringKey("请确保 UPS 已连接并且 macOS 能识别它（例如通过 USB），或配置 NUT Server。"))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 } else {
@@ -55,14 +55,14 @@ struct ContentView: View {
                         .font(.headline)
 
                     HStack {
-                        Text("当前状态:")
+                        Text(LocalizedStringKey("当前状态:"))
                             .bold()
                             .frame(width: 90, alignment: .leading)
-                        Text(monitor.upsInfo["NUTStatus"] as? String ?? "未知")
+                        Text((monitor.upsInfo["NUTStatus"] as? String).map { LocalizedStringKey($0) } ?? LocalizedStringKey("未知"))
                     }
 
                     HStack {
-                        Text("电池电量:")
+                        Text(LocalizedStringKey("电池电量:"))
                             .bold()
                             .frame(width: 90, alignment: .leading)
                         if let charge = monitor.upsInfo["NUTCharge"] as? Int {
@@ -73,7 +73,7 @@ struct ContentView: View {
                     }
 
                     HStack {
-                        Text("剩余时间:")
+                        Text(LocalizedStringKey("剩余时间:"))
                             .bold()
                             .frame(width: 90, alignment: .leading)
                         if let timeInSeconds = monitor.upsInfo["NUTTimeRemaining"] as? Int {
@@ -84,7 +84,7 @@ struct ContentView: View {
                     }
 
                     HStack {
-                        Text("实时负载:")
+                        Text(LocalizedStringKey("实时负载:"))
                             .bold()
                             .frame(width: 90, alignment: .leading)
                         if let load = monitor.upsInfo["NUTLoadPercent"] as? Int {
@@ -110,9 +110,9 @@ struct ContentView: View {
                         // This invisible view pushes the buttons to align with the values above.
                         Color.clear.frame(width: 90)
 
-                        Button("刷新") { monitor.refresh() }
+                        Button(LocalizedStringKey("刷新")) { monitor.refresh() }
 
-                        Button("详情") { showingDetails = true }
+                        Button(LocalizedStringKey("详情")) { showingDetails = true }
                             .disabled(monitor.upsInfo.isEmpty)
                             .padding(.leading, 8)  // Add some space between buttons
 
@@ -135,7 +135,7 @@ struct ContentView: View {
         } else if let nutName = monitor.upsInfo["NUTName"] as? String {
             return nutName
         } else {
-            return monitor.upsInfo[kIOPSNameKey as String] as? String ?? "UPS"
+            return monitor.upsInfo[kIOPSNameKey as String] as? String ?? NSLocalizedString("UPS", comment: "Default UPS name")
         }
     }
 
@@ -145,11 +145,11 @@ struct ContentView: View {
         let seconds = totalSeconds % 60
 
         if hours > 0 {
-            return String(format: "%d时%02d分%02d秒", hours, minutes, seconds)
+            return String(format: NSLocalizedString("%d时%02d分%02d秒", comment: "Time format: H时MM分SS秒"), hours, minutes, seconds)
         } else if minutes > 0 {
-            return String(format: "%d分%02d秒", minutes, seconds)
+            return String(format: NSLocalizedString("%d分%02d秒", comment: "Time format: MM分SS秒"), minutes, seconds)
         } else {
-            return String(format: "%d秒", seconds)
+            return String(format: NSLocalizedString("%d秒", comment: "Time format: SS秒"), seconds)
         }
     }
 }

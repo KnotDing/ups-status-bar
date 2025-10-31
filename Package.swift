@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "NUT",
+    defaultLocalization: "en",
     platforms: [
         // SwiftUI App + Status Bar API require macOS 11.0+ in this codebase
         .macOS(.v11)
@@ -21,7 +22,7 @@ let package = Package(
             path: "UPSStatusBar",
             exclude: ["Info.plist"],
             resources: [
-                .copy("Contents/Resources/AppIcon.icns"),
+                .process("Contents/Resources")
             ],
             linkerSettings: [
                 .linkedFramework("IOKit"),

@@ -24,28 +24,28 @@ struct NutConfigView: View {
         VStack(alignment: .leading, spacing: 12) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("NUT Server 配置")
+                    Text(LocalizedStringKey("NUT Server 配置"))
                         .font(.headline)
 
                     // ... (Server config TextFields) ...
-                    HStack { Text("主机：").frame(width: 120, alignment: .leading); TextField("例如 192.168.1.10", text: $host).textFieldStyle(RoundedBorderTextFieldStyle()) }
-                    HStack { Text("端口：").frame(width: 120, alignment: .leading); TextField("3493", text: $portText).textFieldStyle(RoundedBorderTextFieldStyle()).frame(width: 120) }
-                    HStack { Text("用户名：").frame(width: 120, alignment: .leading); TextField("(可选)", text: $user).textFieldStyle(RoundedBorderTextFieldStyle()) }
-                    HStack { Text("密码：").frame(width: 120, alignment: .leading); SecureField("(可选)", text: $password).textFieldStyle(RoundedBorderTextFieldStyle()) }
-                    HStack { Text("自定义 UPS 名称：").frame(width: 120, alignment: .leading); TextField("(可选)", text: $customUPSName).textFieldStyle(RoundedBorderTextFieldStyle()) }
+                    HStack { Text(LocalizedStringKey("主机：")).frame(width: 120, alignment: .leading); TextField(LocalizedStringKey("例如 192.168.1.10"), text: $host).textFieldStyle(RoundedBorderTextFieldStyle()) }
+                    HStack { Text(LocalizedStringKey("端口：")).frame(width: 120, alignment: .leading); TextField(LocalizedStringKey("3493"), text: $portText).textFieldStyle(RoundedBorderTextFieldStyle()).frame(width: 120) }
+                    HStack { Text(LocalizedStringKey("用户名：")).frame(width: 120, alignment: .leading); TextField(LocalizedStringKey("(可选)"), text: $user).textFieldStyle(RoundedBorderTextFieldStyle()) }
+                    HStack { Text(LocalizedStringKey("密码：")).frame(width: 120, alignment: .leading); SecureField(LocalizedStringKey("(可选)"), text: $password).textFieldStyle(RoundedBorderTextFieldStyle()) }
+                    HStack { Text(LocalizedStringKey("自定义 UPS 名称：")).frame(width: 120, alignment: .leading); TextField(LocalizedStringKey("(可选)"), text: $customUPSName).textFieldStyle(RoundedBorderTextFieldStyle()) }
 
                     if !testMessage.isEmpty {
                         Text(testMessage)
-                            .foregroundColor(testMessage.contains("成功") || testMessage.contains("已保存") ? .green : .red)
+                            .foregroundColor(testMessage.contains(NSLocalizedString("成功", comment: "")) || testMessage.contains(NSLocalizedString("已保存", comment: "")) ? .green : .red)
                             .fixedSize(horizontal: false, vertical: true)
                             .padding(.top, 5)
                     }
 
                     if !discoveredUPS.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("在 NUT Server 上发现的 UPS：")
+                            Text(LocalizedStringKey("在 NUT Server 上发现的 UPS："))
                                 .font(.subheadline)
-                            Picker("选择 UPS", selection: $selectedUPS) {
+                            Picker(LocalizedStringKey("选择 UPS"), selection: $selectedUPS) {
                                 ForEach(discoveredUPS, id: \.self) { ups in
                                     Text(ups).tag(ups as String?)
                                 }
@@ -59,15 +59,15 @@ struct NutConfigView: View {
                         if selectedUPS != nil {
                             Divider()
                             VStack(alignment: .leading) {
-                                Text("\(selectedUPS!) 的详情：").font(.headline)
+                                Text(LocalizedStringKey("\(selectedUPS!) 的详情：")).font(.headline)
                                 if isFetchingDetails {
-                                    Text("加载中...")
+                                    Text(LocalizedStringKey("加载中..."))
                                         .foregroundColor(.secondary)
                                 } else if !selectedUPSDetails.isEmpty {
                                     // Reuse the preview view to show details
                                     UPSPreviewPopoverView(preview: .constant(selectedUPSDetails))
                                 } else {
-                                    Text("未能获取此UPS的详细信息。")
+                                    Text(LocalizedStringKey("未能获取此UPS的详细信息。"))
                                         .foregroundColor(.secondary)
                                 }
                             }.padding(.top, 5)
@@ -77,14 +77,14 @@ struct NutConfigView: View {
             }
 
             HStack {
-                Button("取消") { onDismiss() }
+                Button(LocalizedStringKey("取消")) { onDismiss() }
                 Spacer()
                 Button(action: testConnectionAndDiscoverUPS) {
-                    Text(isTesting ? "测试中..." : "测试并发现 UPS")
+                    Text(isTesting ? LocalizedStringKey("测试中...") : LocalizedStringKey("测试并发现 UPS"))
                 }
                 .disabled(host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isTesting)
 
-                Button(action: saveConfig) { Text("保存") }.keyboardShortcut(.defaultAction)
+                Button(action: saveConfig) { Text(LocalizedStringKey("保存")) }.keyboardShortcut(.defaultAction)
             }
         }
         .padding()
@@ -107,7 +107,7 @@ struct NutConfigView: View {
 
     private func saveConfig() {
         let trimmedHost = host.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedHost.isEmpty else { testMessage = "请填写主机地址"; return }
+        guard !trimmedHost.isEmpty else { testMessage = NSLocalizedString("请填写主机地址", comment: ""); return }
         UserDefaults.standard.setValue(trimmedHost, forKey: "NUTHost")
         UserDefaults.standard.setValue(portText, forKey: "NUTPort")
         UserDefaults.standard.setValue(user, forKey: "NUTUser")
@@ -117,7 +117,7 @@ struct NutConfigView: View {
         else { UserDefaults.standard.removeObject(forKey: "NUTSelectedUPS") }
 
         monitor.refresh()
-        testMessage = "配置已保存"
+        testMessage = NSLocalizedString("配置已保存", comment: "")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { onDismiss() }
     }
 
@@ -136,9 +136,9 @@ struct NutConfigView: View {
                     if self.selectedUPS == nil || !upsList.contains(self.selectedUPS!) {
                         self.selectedUPS = upsList.first
                     }
-                    self.testMessage = "成功发现 \(upsList.count) 个 UPS。"
+                    self.testMessage = String(format: NSLocalizedString("成功发现 %d 个 UPS。", comment: ""), upsList.count)
                 } else {
-                    self.testMessage = "连接成功，但未发现任何 UPS。"
+                    self.testMessage = NSLocalizedString("连接成功，但未发现任何 UPS。", comment: "")
                 }
             }
         }
