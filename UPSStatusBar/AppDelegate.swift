@@ -2,6 +2,11 @@ import Cocoa
 import SwiftUI
 import UserNotifications
 
+class KeyWindow: NSWindow {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+}
+
 class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow!
     var statusBarController: StatusBarController!
@@ -27,10 +32,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             .environmentObject(monitor)
 
         // Create a borderless window to act as a popover
-        window = NSWindow(
+        window = KeyWindow(
             contentRect: .zero,
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered, defer: false)
+        window.makeKeyAndOrderFront(nil)
         window.isReleasedWhenClosed = false
         window.isOpaque = false
         window.backgroundColor = .clear

@@ -27,8 +27,6 @@ struct NutConfigView: View {
                     Text(LocalizedStringKey("NUT Server 配置"))
                         .font(.headline)
                         .frame(maxWidth: .infinity, alignment: .center)
-
-                    // ... (Server config TextFields) ...
                     HStack {
                         Text(LocalizedStringKey("主机：")).frame(width: 120, alignment: .leading)
                         TextField(LocalizedStringKey("例如 192.168.1.10"), text: $host)
@@ -57,27 +55,14 @@ struct NutConfigView: View {
                             RoundedBorderTextFieldStyle())
                     }
 
-                    HStack {
-                        Button(action: testConnectionAndDiscoverUPS) {
-                            Text(
-                                isTesting
-                                    ? LocalizedStringKey("测试中...") : LocalizedStringKey("测试并发现 UPS")
+                    if !testMessage.isEmpty {
+                        Text(testMessage)
+                            .foregroundColor(
+                                testMessage.contains(NSLocalizedString("成功", comment: ""))
+                                    || testMessage.contains(NSLocalizedString("已保存", comment: ""))
+                                    ? .green : .red
                             )
-                        }.disabled(
-                            host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                                || isTesting)
-                        Spacer()
-                        if !testMessage.isEmpty {
-                            Text(testMessage)
-                                .foregroundColor(
-                                    testMessage.contains(NSLocalizedString("成功", comment: ""))
-                                        || testMessage.contains(
-                                            NSLocalizedString("已保存", comment: ""))
-                                        ? .green : .red
-                                )
-                                .fixedSize(horizontal: false, vertical: true)
-                            //.padding(.top, 5)
-                        }
+                            .fixedSize(horizontal: false, vertical: true)
                     }
 
                     if !discoveredUPS.isEmpty {
