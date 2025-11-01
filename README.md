@@ -61,6 +61,12 @@
     ```
     应用程序也可以使用 `swift build -c release` 命令以发布模式构建。最终的可执行文件将位于 `.build/release` 目录中。
 
+    要创建一个独立的 `.app` 文件，你可以使用提供的 shell 脚本：
+    ```bash
+    ./build_app.sh
+    ```
+    这将在项目根目录中创建 `UPSStatusBar.app`，然后你可以将其复制到你的 `/Applications` 文件夹中。
+
 ## 配置
 
 - **NUT 服务器**: 点击主弹窗中的“配置 NUT”按钮，设置您的 NUT 服务器的主机、端口和凭据。您还可以测试连接并选择要监控的 UPS。

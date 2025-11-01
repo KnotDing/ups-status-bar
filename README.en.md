@@ -59,6 +59,12 @@ A simple macOS status bar application to monitor an Uninterruptible Power Supply
     ```
     The application can also be built for release using `swift build -c release`. The final executable will be located in the `.build/release` directory.
 
+    To create a standalone `.app` bundle, you can use the provided shell script:
+    ```bash
+    ./build_app.sh
+    ```
+    This will create `UPSStatusBar.app` in the project root directory, which you can then copy to your `/Applications` folder.
+
 ## Configuration
 
 - **NUT Server**: Click the "Configure NUT" button in the main popover to set up your NUT server's host, port, and credentials. You can also test the connection and select which UPS to monitor.
