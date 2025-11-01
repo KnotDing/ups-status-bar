@@ -22,4 +22,18 @@ struct AppleScriptRunner {
         let script = "tell application \"System Events\" to shut down"
         _ = run(script: script)
     }
+
+    static func runShellScript(path: String) {
+        print("Executing custom shutdown script at \(path)...")
+        let task = Process()
+        task.launchPath = "/bin/sh"
+        task.arguments = [path]
+        task.launch()
+        task.waitUntilExit()
+        if task.terminationStatus != 0 {
+            print("Custom shutdown script failed with exit code \(task.terminationStatus).")
+        } else {
+            print("Custom shutdown script executed successfully.")
+        }
+    }
 }

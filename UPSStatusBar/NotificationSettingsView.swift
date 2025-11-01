@@ -11,9 +11,12 @@ struct NotificationSettingsView: View {
     @State private var notifyOnFullyCharged: Bool = false
     @State private var notifyOnHighLoad: Bool = false
     @State private var highLoadThreshold: String = "90"
+    @State private var notifyOnNutConnectionChange: Bool = false
     @State private var autoShutdownEnabled: Bool = false
     @State private var shutdownConditionIndex: Int = 0
     @State private var shutdownValue: String = "10"
+    @State private var useCustomShutdownAction: Bool = false
+    @State private var customShutdownActionPath: String = ""
     @State private var showStatusInMenuBar: Bool = false
     @State private var showChargeInMenuBar: Bool = false
     @State private var showStatusSymbolInMenuBar: Bool = false
@@ -70,14 +73,19 @@ struct NotificationSettingsView: View {
                     VStack(alignment: .leading) {
                         Text(LocalizedStringKey("通知")).font(.headline)
                         Toggle(LocalizedStringKey("UPS 状态变化时通知"), isOn: $notifyOnStatusChange)
+                        Toggle(
+                            LocalizedStringKey("NUT Server 连接状态变化时通知"),
+                            isOn: $notifyOnNutConnectionChange)
                         Toggle(LocalizedStringKey("电量充满时通知"), isOn: $notifyOnFullyCharged)
                         HStack {
                             Toggle(LocalizedStringKey("电量低于设定值时通知"), isOn: $notifyOnLowBattery)
                             Spacer()
                             TextField("", text: $lowBatteryThreshold).frame(width: 40)
                                 .multilineTextAlignment(.trailing).textFieldStyle(
-                                    RoundedBorderTextFieldStyle())
+                                    RoundedBorderTextFieldStyle()
+                                ).disabled(!notifyOnLowBattery)
                             Text(LocalizedStringKey("%"))
+
                         }
                         HStack {
                             Toggle(LocalizedStringKey("负载高于设定值时通知"), isOn: $notifyOnHighLoad)
@@ -85,8 +93,11 @@ struct NotificationSettingsView: View {
                             TextField("", text: $highLoadThreshold).frame(width: 40)
                                 .multilineTextAlignment(
                                     .trailing
-                                ).textFieldStyle(RoundedBorderTextFieldStyle())
+                                ).textFieldStyle(
+                                    RoundedBorderTextFieldStyle()
+                                ).disabled(!notifyOnHighLoad)
                             Text(LocalizedStringKey("%"))
+
                         }
                     }
 
@@ -114,6 +125,16 @@ struct NotificationSettingsView: View {
                         Text(LocalizedStringKey("警告：这是一个危险操作，它会触发系统关机。请谨慎使用。"))
                             .font(.caption)
                             .foregroundColor(.secondary)
+
+                        Toggle(LocalizedStringKey("使用自定义关机动作"), isOn: $useCustomShutdownAction)
+                            .disabled(!autoShutdownEnabled)
+
+                        HStack {
+                            Text(LocalizedStringKey("脚本路径："))
+                            TextField("", text: $customShutdownActionPath)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                        }
+                        .disabled(!autoShutdownEnabled || !useCustomShutdownAction)
                     }
                 }
             }
@@ -149,9 +170,14 @@ struct NotificationSettingsView: View {
         notifyOnFullyCharged = UserDefaults.standard.bool(forKey: "notifyOnFullyCharged")
         notifyOnHighLoad = UserDefaults.standard.bool(forKey: "notifyOnHighLoad")
         highLoadThreshold = UserDefaults.standard.string(forKey: "highLoadThreshold") ?? "90"
+        notifyOnNutConnectionChange = UserDefaults.standard.bool(
+            forKey: "notifyOnNutConnectionChange")
         autoShutdownEnabled = UserDefaults.standard.bool(forKey: "autoShutdownEnabled")
         shutdownConditionIndex = UserDefaults.standard.integer(forKey: "shutdownConditionIndex")
         shutdownValue = UserDefaults.standard.string(forKey: "shutdownValue") ?? "10"
+        useCustomShutdownAction = UserDefaults.standard.bool(forKey: "useCustomShutdownAction")
+        customShutdownActionPath =
+            UserDefaults.standard.string(forKey: "customShutdownActionPath") ?? ""
         showStatusInMenuBar = UserDefaults.standard.bool(forKey: "showStatusInMenuBar")
         showChargeInMenuBar = UserDefaults.standard.bool(forKey: "showChargeInMenuBar")
         showStatusSymbolInMenuBar = UserDefaults.standard.bool(forKey: "showStatusSymbolInMenuBar")
@@ -168,9 +194,13 @@ struct NotificationSettingsView: View {
         UserDefaults.standard.set(notifyOnFullyCharged, forKey: "notifyOnFullyCharged")
         UserDefaults.standard.set(notifyOnHighLoad, forKey: "notifyOnHighLoad")
         UserDefaults.standard.set(highLoadThreshold, forKey: "highLoadThreshold")
+        UserDefaults.standard.set(
+            notifyOnNutConnectionChange, forKey: "notifyOnNutConnectionChange")
         UserDefaults.standard.set(autoShutdownEnabled, forKey: "autoShutdownEnabled")
         UserDefaults.standard.set(shutdownConditionIndex, forKey: "shutdownConditionIndex")
         UserDefaults.standard.set(shutdownValue, forKey: "shutdownValue")
+        UserDefaults.standard.set(useCustomShutdownAction, forKey: "useCustomShutdownAction")
+        UserDefaults.standard.set(customShutdownActionPath, forKey: "customShutdownActionPath")
         UserDefaults.standard.set(showStatusInMenuBar, forKey: "showStatusInMenuBar")
         UserDefaults.standard.set(showChargeInMenuBar, forKey: "showChargeInMenuBar")
         UserDefaults.standard.set(showStatusSymbolInMenuBar, forKey: "showStatusSymbolInMenuBar")

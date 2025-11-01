@@ -32,15 +32,18 @@ struct ContentView: View {
             } else {
                 // Summary View (Original Content)
                 HStack {
+                    Text(getUPSDisplayName())
+                        .font(.headline)
                     Spacer()
                     Button(LocalizedStringKey("配置 NUT")) { showingNutConfig = true }
-
                     Button(action: { showingSettings = true }) {
                         Image(systemName: "gearshape.fill")
                     }
                     .buttonStyle(BorderlessButtonStyle())
                     .padding(.leading, 4)
                 }
+
+                Spacer()
 
                 if monitor.upsInfo.isEmpty {
                     Text(LocalizedStringKey("未检测到 UPS"))
@@ -50,11 +53,8 @@ struct ContentView: View {
                     )
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                    Spacer()
                 } else {
-                    Text(getUPSDisplayName())
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, alignment: .center)
-
                     HStack {
                         Text(LocalizedStringKey("当前状态:"))
                             .bold()
@@ -65,7 +65,6 @@ struct ContentView: View {
                             }
                                 ?? LocalizedStringKey("未知"))
                     }
-
                     HStack {
                         Text(LocalizedStringKey("电池电量:"))
                             .bold()
@@ -76,7 +75,6 @@ struct ContentView: View {
                             Text("-")
                         }
                     }
-
                     HStack {
                         Text(LocalizedStringKey("剩余时间:"))
                             .bold()
@@ -110,7 +108,7 @@ struct ContentView: View {
                             Text("-")
                         }
                     }
-
+                    Spacer()
                     HStack {
                         // This invisible view pushes the buttons to align with the values above.
                         Color.clear.frame(width: 90)
@@ -120,8 +118,6 @@ struct ContentView: View {
                         Button(LocalizedStringKey("详情")) { showingDetails = true }
                             .disabled(monitor.upsInfo.isEmpty)
                             .padding(.leading, 8)  // Add some space between buttons
-
-                        Spacer()
                     }
                 }
             }
@@ -129,7 +125,7 @@ struct ContentView: View {
         .padding()
         .frame(
             width: showingDetails ? 450 : (showingSettings ? 450 : (showingNutConfig ? 450 : 250)),
-            height: showingDetails ? 400 : (showingSettings ? 600 : (showingNutConfig ? 500 : 220)))
+            height: showingDetails ? 400 : (showingSettings ? 650 : (showingNutConfig ? 500 : 220)))
     }
 
     private func getUPSDisplayName() -> String {

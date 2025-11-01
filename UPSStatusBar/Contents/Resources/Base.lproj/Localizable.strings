@@ -61,3 +61,9 @@
 "成功发现 %d 个 UPS。" = "Successfully discovered %d UPS(s).";
 "连接成功，但未发现任何 UPS。" = "Connection successful, but no UPS found.";
 "没有可用的预览数据。" = "No preview data available.";
+"NUT Server 连接状态变化时通知" = "Notify on NUT Server Connection Change";
+"NUT Server 连接状态" = "NUT Server Connection Status";
+"NUT Server 已重新连接。" = "NUT Server reconnected.";
+"NUT Server 连接已断开。" = "NUT Server connection lost.";
+"使用自定义关机动作" = "Use Custom Shutdown Action";
+"脚本路径：" = "Script Path:";

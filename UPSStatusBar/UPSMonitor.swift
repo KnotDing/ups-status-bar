@@ -96,6 +96,11 @@ class UPSMonitor: ObservableObject {
             print("UPS returned to line power. Resetting shutdown state.")
         }
 
+        if let newReachable = newInfo["NUTReachable"] as? Bool, let oldReachable = oldInfo["NUTReachable"] as? Bool, newReachable != oldReachable, UserDefaults.standard.bool(forKey: "notifyOnNutConnectionChange") {
+            let body = newReachable ? "NUT Server 已重新连接。" : "NUT Server 连接已断开。"
+            sendNotification(title: "NUT Server 连接状态", body: body)
+        }
+
         if UserDefaults.standard.bool(forKey: "notifyOnStatusChange"), let new = newStatus, let old = oldStatus, !areStatusesEquivalentForNotification(status1: new, status2: old) {
             sendNotification(title: "UPS 状态变化", body: "状态已从 \(old) 变为 \(new)。")
         }
@@ -146,12 +151,20 @@ class UPSMonitor: ObservableObject {
         }
 
         if shouldShutdown {
-            let body = "UPS满足关机条件: \(reason)。系统将在5秒后关闭。"
+            let useCustomAction = UserDefaults.standard.bool(forKey: "useCustomShutdownAction")
+            let customActionPath = UserDefaults.standard.string(forKey: "customShutdownActionPath") ?? ""
+
+            let body = "UPS满足关机条件: \(reason)。执行关机动作。"
             print("Shutdown condition met: \(body)")
             sendNotification(title: "自动关机", body: body)
             shutdownCommandIssued = true
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                AppleScriptRunner.shutDown()
+                if useCustomAction, !customActionPath.isEmpty {
+                    AppleScriptRunner.runShellScript(path: customActionPath)
+                } else {
+                    AppleScriptRunner.shutDown()
+                }
             }
         }
     }
