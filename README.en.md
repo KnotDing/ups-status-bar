@@ -14,7 +14,10 @@ A simple macOS status bar application to monitor an Uninterruptible Power Supply
     - Battery level drops below a custom threshold
     - Battery becomes fully charged
     - Load exceeds a custom threshold
+    - **NUT Server Connection Status**: Get notified when the connection to the NUT server is lost or re-established.
+- **Customizable Status Bar Display**: Users can customize which UPS information is displayed in the status bar, such as status icon, charge, time remaining, and load.
 - **Launch at Login**: Conveniently set the application to start automatically when you log in to your Mac.
+- **Custom Shutdown Action**: When auto-shutdown is triggered, you can choose to execute a custom shell script instead of the default shutdown command.
 
 ## Screenshots
 
