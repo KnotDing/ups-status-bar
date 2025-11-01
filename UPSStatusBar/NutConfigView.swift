@@ -55,14 +55,29 @@ struct NutConfigView: View {
                             RoundedBorderTextFieldStyle())
                     }
 
-                    if !testMessage.isEmpty {
-                        Text(testMessage)
-                            .foregroundColor(
-                                testMessage.contains(NSLocalizedString("成功", comment: ""))
-                                    || testMessage.contains(NSLocalizedString("已保存", comment: ""))
-                                    ? .green : .red
+                    HStack {
+
+                        Button(action: testConnectionAndDiscoverUPS) {
+                            Text(
+
+                                isTesting
+                                    ? LocalizedStringKey("测试中...") : LocalizedStringKey("测试并发现 UPS")
                             )
-                            .fixedSize(horizontal: false, vertical: true)
+                        }.disabled(
+                            host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                || isTesting)
+                        Spacer()
+                        if !testMessage.isEmpty {
+                            Text(testMessage)
+                                .foregroundColor(
+                                    testMessage.contains(NSLocalizedString("成功", comment: ""))
+                                        || testMessage.contains(
+                                            NSLocalizedString("已保存", comment: ""))
+                                        ? .green : .red
+                                )
+                                .fixedSize(horizontal: false, vertical: true)
+                            //.padding(.top, 5)
+                        }
                     }
 
                     if !discoveredUPS.isEmpty {
