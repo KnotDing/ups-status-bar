@@ -54,9 +54,9 @@ struct NotificationSettingsView: View {
                         Toggle(LocalizedStringKey("在状态栏中显示状态"), isOn: $showStatusInMenuBar)
                         if showStatusInMenuBar {
                             VStack(alignment: .leading) {
-                                Toggle(LocalizedStringKey("显示电量"), isOn: $showChargeInMenuBar)
                                 Toggle(
                                     LocalizedStringKey("显示状态图标"), isOn: $showStatusSymbolInMenuBar)
+                                Toggle(LocalizedStringKey("显示电量"), isOn: $showChargeInMenuBar)
                                 Toggle(
                                     LocalizedStringKey("显示剩余时间"), isOn: $showTimeRemainingInMenuBar)
                                 Toggle(LocalizedStringKey("显示负载"), isOn: $showLoadInMenuBar)
