@@ -21,6 +21,10 @@ A simple macOS status bar application to monitor an Uninterruptible Power Supply
 
 ## Screenshots
 
+**Status Bar Display**
+
+![Status Bar Display](images/bar.png)
+
 **Main Interface**
 
 ![Main Interface](images/main.png)
